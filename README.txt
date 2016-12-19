@@ -13,7 +13,7 @@ System Requirements:
     command prompt type pip3. If a list of commands appear then your ready to role,
     otherwise please seek advice online to get pip to function in your Ubuntu setup.
 
-Installation:
+Installation & Setup:
     To get my twitter bot running, their are a few steps you must complete first!
     First let's download our dependencies:
 
@@ -29,8 +29,31 @@ Installation:
         If the install was a success no error should occur when importing the twitter module.
 
     Now your all set and ready to go. You can clone my repository to your local disk by using the following commands:
-        cd (Please insert the location of the directory you wish to place the repo in here. E.g. /home/rory/)
-        git clone https://github.com/Rawd2020/Twitter_Bot
+        -cd (Please insert the location of the directory you wish to place the repo in here. E.g. /home/rory/)
+        -git clone https://github.com/Rawd2020/Twitter_Bot
 
     Ok now that you have the bot downloaded please add a Keys.txt file into it's repo folder. This file is were
-    you will 
+    you will put the keys for the OAuth security of your twitter account. This will give the programme access to
+    your twitter account. You can create an application and an access token for it at the following link:
+        https://apps.twitter.com/
+    If your are unsure as to how to create the application please follow the following tutorial:
+        https://www.youtube.com/watch?v=rWNYZOT0a6o
+    Note:
+        For the website field if you don't have a website or don't know what to fill in here just
+        put in:
+            http://www.google.com
+        Also, leave the callback URL blank unless you know what your doing.
+    Once your application is created you need to place your four keys into the Keys.txt file in the following order:
+        Line 1 = Consumer Key (API Key)
+        Line 2 = Consumer Secret (API Secret)
+        Line 3 = Access Token
+        Line 4 = Access Token Secret
+    After that you should be good to go! :D
+
+Testing:
+    To test the setup of the twitter bot open a terminal and type the following:
+        -cd (Please insert the location of the twitter bot repo in here. E.g. /home/rory/Twitter_Bot)
+        -python3 Main.py
+    If everything worked then you should quickly see a message, "Tweeted", printed on the screen. To verify
+    a tweet was successfully made to your account just sign into your twitter and have a look. There should be a
+    new tweet posted that came from the Tweets.txt file.
