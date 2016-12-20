@@ -1,8 +1,9 @@
 # Created by: Rory Williams Doyle
 # Created on: 18/12/2016
-# Last modified: 18/12/2016
-# Version: 2.0
+# Last modified: 20/12/2016
+# Version: 2.1
 
+# These import statements import all the external libraries used in the bot.
 import twitter
 import threading
 from queue import Queue
@@ -11,8 +12,10 @@ import time
 import uuid
 
 
+# This class defines a bot and sets up the keys for OAuth with the twitter api.
 class Bot(object):
     def __init__(self):
+        # Reading in keys from text file.
         f = open("Keys.txt", "r")
         temp = f.readlines()
         f.close()
@@ -30,56 +33,74 @@ class Bot(object):
                                access_token_key=t_key,
                                access_token_secret=t_secret)
 
+# This is where you define your bot instances and set up the queue and lock for the threads. I called my bot Gleeson.
 Gleeson = Bot()
 queue = Queue()
 Gleeson_lock = threading.Lock()
 
 
+# This job is for sending out random pre-written tweets periodically.
 def tweet(worker):
+    # Reading in tweets from text file.
     f = open("Tweets.txt", "r")
     temp = f.readlines()
     f.close()
     tweets = []
+    # Strips newline characters from the read in tweets.
     for line in temp:
         tweets.append(line.rstrip())
-    while True:
-        number = random.randrange(0, len(temp))
-        error = 0
-        while error == 0:
-            try:
-                with Gleeson_lock:
-                    Gleeson.api.PostUpdates(tweets[number])
-                    print("Tweeted.")
-                    error = 1
-            except twitter.error.TwitterError:
-                print("Tweet Failed.")
-        time.sleep(1800)
+    # This number is used to pick a random tweet.
+    number = random.randrange(0, len(temp))
+    # Tries to post tweet but built in exception in case the tweet fails.
+    try:
+        with Gleeson_lock:
+            Gleeson.api.PostUpdates(tweets[number])
+            print("Tweeted.")
+    except twitter.error.TwitterError:
+        print("Tweet Failed.")
 
 
+# This job is for re-tweeting tweets periodically.
 def re_tweet(worker):
+    # Tries to make a re-tweet but has a built in exception in case it fails.
     try:
         with Gleeson_lock:
             number = uuid.uuid1().int >> 64
             Gleeson.api.PostRetweet(number)
             print("Re-Tweeted.")
-    except:
+    except twitter.error.TwitterError:
         print("Re-Tweet Failed.")
 
 
+# The threader handles the distribution of jobs to the threads(workers).
 def threader():
+    # Main programme loop.
     while True:
         worker = queue.get()
-        tweet(worker)
-        re_tweet(worker)
-        queue.task_done()
+        number = random.randint(0,1)
+        print(number)
+        # The worker is assigned a random job based off the randomly generated number variable.
+        if number == 0:
+            tweet(worker)
+            queue.task_done()
+        elif number == 1:
+            re_tweet(worker)
+            queue.task_done()
+        else:
+            print("Threader number error.")
+            break
+        # This wait period defines the gap between when the bot finishes a job and when it moves onto the next.
+        time.sleep(900)
 
 # This for loop defines the number of threads(workers) available to the programme to work with
-for x in range(2):
+for x in range(1):
     thread = threading.Thread(target=threader)
     thread.daemon = True
     thread.start()
 
-for worker in range(1):
+# This loop defines the number of jobs in the queue.
+for worker in range(5):
     queue.put(worker)
 
+# Starts the main thread.
 queue.join()
