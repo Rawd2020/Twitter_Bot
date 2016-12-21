@@ -40,7 +40,8 @@ hashtags = read_in("Hashtags.txt", "r")
 tweets = read_in("Tweets.txt", "r")
 # Creates the job queue.
 queue = Queue()
-
+# A simple thread lock to prevent data corruption.
+twitter_lock = threading.Lock()
 
 # This job is for sending out random pre-written tweets periodically.
 def tweet(worker_thread):
@@ -50,11 +51,13 @@ def tweet(worker_thread):
     post = 0
     while post == 0:
         try:
-            api.PostUpdates(tweets[number])
-            print("Tweeted.")
-            post = 1
+            with twitter_lock:
+                api.PostUpdates(tweets[number])
+                print("Tweeted.")
+                post = 1
         except twitter.error.TwitterError:
-            print("Tweet Failed.")
+            with twitter_lock:
+                print("Tweet Failed.")
 
 
 # This job is for re-tweeting tweets periodically.
@@ -63,16 +66,18 @@ def re_tweet(worker_thread):
     post = 0
     while post == 0:
         try:
-            # This number is used to pick a random hashtag for the search.
-            number = random.randrange(0, len(hashtags))
-            hashtag = hashtags[number]
-            # Searched for a tweet using a random hashtag and posts the first result.
-            api.PostRetweet(api.GetSearch(
-                raw_query="q=%23"+hashtag+" lang%3Aen&count=1")[0].id_str)
-            print("Re-Tweeted.")
-            post = 1
+            with twitter_lock:
+                # This number is used to pick a random hashtag for the search.
+                number = random.randrange(0, len(hashtags))
+                hashtag = hashtags[number]
+                # Searched for a tweet using a random hashtag and posts the first result.
+                api.PostRetweet(api.GetSearch(
+                    raw_query="q=%23"+hashtag+" lang%3Aen&count=1")[0].id_str)
+                print("Re-Tweeted.")
+                post = 1
         except twitter.error.TwitterError:
-            print("Re-Tweet Failed.")
+            with twitter_lock
+                print("Re-Tweet Failed.")
 
 
 # The threader handles the distribution of jobs to the threads(workers).
