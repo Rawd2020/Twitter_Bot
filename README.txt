@@ -68,7 +68,7 @@ Miscellaneous:
     a new line excluding the has symbol from the start. For example, ig you wished to add the the hashtag #Peace,
     you would type the word:
         Peace
-    on the bottom line of Hashtage.txt.
+    on the bottom line of Hashtag.txt.
 
     -A similar process can be followed to add new tweets to the bots tweet job. Simply type the tweet at the bottom
     of the file (ensuring it is under twitters character limit) and save.
