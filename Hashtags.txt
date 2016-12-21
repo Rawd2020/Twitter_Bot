@@ -20,7 +20,6 @@ women
 men
 child
 news
-sky
 fox
 cnn
 cbs
