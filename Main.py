@@ -1,7 +1,7 @@
 # Created by: Rory Williams Doyle
 # Created on: 18/12/2016
 # Last modified: 21/12/2016
-# Version: 3.0
+# Version: 3.1
 
 # These import statements import all the external libraries used in the bot.
 import twitter
@@ -65,8 +65,7 @@ def tweet(worker_thread):
 # This job is for re-tweeting tweets periodically.
 def re_tweet(worker_thread):
     # Tries to make a re-tweet but has a built in exception in case it fails.
-    post = 0
-    while post == 0:
+    while True:
         try:
             with twitter_lock:
                 # This number is used to pick a random hashtag for the search.
@@ -74,15 +73,34 @@ def re_tweet(worker_thread):
                 hashtag = hashtags[number]
                 try:
                     # Searched for a tweet using a random hashtag and posts the first result.
-                    api.PostRetweet(api.GetSearch(
-                        raw_query="q=%23"+hashtag+" lang%3Aen&count=1")[0].id_str)
+                    api.PostRetweet(api.GetSearch(raw_query="q=%23"+hashtag+" lang%3Aen&count=1")[0].id_str)
                     print("Re-Tweeted.")
-                    post = 1
+                    break
                 except IndexError:
                     print("This hashtag is not returning any object: "+hashtag)
         except twitter.error.TwitterError:
             with twitter_lock:
                 print("Re-Tweet Failed.")
+
+
+# This job makes the bot follow another twitter user.
+def friend(worker_thread):
+    # Tries to follow a user but has a built in exception in case it fails.
+    while True:
+        try:
+            with twitter_lock:
+                number = random.randrange(0, len(hashtags))
+                hashtag = hashtags[number]
+                try:
+                    result = api.GetSearch(raw_query="q=%23" +hashtag + " lang%3Aen&count=1")[0].user
+                    api.CreateFriendship(result.id)
+                    print("Following: "+result.screen_name)
+                    break
+                except IndexError:
+                    print("This hashtag is not returning any object: "+hashtag)
+        except twitter.error.TwitterError:
+            with twitter_lock:
+                print("Follow Failed")
 
 
 # The threader handles the distribution of jobs to the threads(workers).
@@ -91,13 +109,16 @@ def threader():
     if (SETTINGS[7].split("=")[1]) == "Default":
         while True:
             worker_thread = queue.get()
-            number = random.randint(0, 1)
+            number = random.randint(0, 2)
             # The worker is assigned a random job based off the randomly generated number variable.
             if number == 0:
                 tweet(worker_thread)
                 queue.task_done()
             elif number == 1:
                 re_tweet(worker_thread)
+                queue.task_done()
+            elif number == 2:
+                friend(worker_thread)
                 queue.task_done()
             else:
                 print("Threader number error.")

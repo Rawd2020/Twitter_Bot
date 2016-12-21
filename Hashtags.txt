@@ -16,9 +16,7 @@ python
 facebook
 twitter
 cooker
-women
 men
-child
 news
 fox
 cnn
@@ -27,4 +25,3 @@ nbc
 msnbc
 rte
 ireland
-dublin

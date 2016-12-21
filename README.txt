@@ -3,7 +3,7 @@ WELCOME TO TWITTER BOT! :D
 Created by: Rory Williams Doyle
 Created on: 18/12/2016
 Last modified: 21/12/2016
-Software version: 3.0
+Software version: 3.1
 README last update: 21/12/2016
 
 System Requirements:
