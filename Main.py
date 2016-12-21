@@ -22,9 +22,10 @@ def read_in(file_name, permission):
         data.append(item.rstrip())
     return data
 
+
 # Reading in bot settings from Config.txt
 SETTINGS = read_in("Config.txt", "r")
-# Sets up the api for use.
+# Sets up the api for use using the keys from Config.txt.
 api = twitter.Api(consumer_key=SETTINGS[0].split("=")[1],
                   consumer_secret=SETTINGS[1].split("=")[1],
                   access_token_key=SETTINGS[2].split("=")[1],
@@ -41,16 +42,21 @@ twitter_lock = threading.Lock()
 
 # This job is for sending out random pre-written tweets periodically.
 def tweet(worker_thread):
-    # This number is used to pick a random tweet.
-    number = random.randrange(0, len(tweets))
+    # This loop handles the picking of a valid tweet from Tweets.txt to post.
+    # It will inform the user if any tweet is over the 140 character limit.
+    while True:
+        number = random.randrange(0, len(tweets))
+        if len(tweets[number]) <= 140:
+            break
+        else:
+            print("This tweet is over the character limit: "+tweets[number])
     # Tries to post tweet but built in exception in case the tweet fails.
-    post = 0
-    while post == 0:
+    while True:
         try:
             with twitter_lock:
                 api.PostUpdates(tweets[number])
                 print("Tweeted.")
-                post = 1
+                break
         except twitter.error.TwitterError:
             with twitter_lock:
                 print("Tweet Failed.")
@@ -73,7 +79,7 @@ def re_tweet(worker_thread):
                     print("Re-Tweeted.")
                     post = 1
                 except IndexError:
-                    print(hashtag+": This hashtag is not returning any object!")
+                    print("This hashtag is not returning any object: "+hashtag)
         except twitter.error.TwitterError:
             with twitter_lock:
                 print("Re-Tweet Failed.")
@@ -100,6 +106,7 @@ def threader():
             time.sleep(int(SETTINGS[4].split("=")[1]))
     else:
         print("Non-Default functionality has not been programmed yet!")
+
 
 # This for loop defines the number of threads(workers) available to the programme to work with
 for x in range(int(SETTINGS[6].split("=")[1])):
