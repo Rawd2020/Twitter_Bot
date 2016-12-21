@@ -76,7 +76,7 @@ def re_tweet(worker_thread):
                 print("Re-Tweeted.")
                 post = 1
         except twitter.error.TwitterError:
-            with twitter_lock
+            with twitter_lock:
                 print("Re-Tweet Failed.")
 
 
