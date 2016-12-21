@@ -10,14 +10,19 @@ from queue import Queue
 import random
 import time
 
+
+# This function is designed to remove the repeated code for
+# reading in files and removing new line characters.
+def read_in(file_name, permission):
+    file = open(file_name, permission)
+    temporary = file.readlines()
+    file.close()
+    data = []
+    for item in temporary:
+        data.append(item.rstrip())
+    return data
 # Reading in keys from text file.
-f = open("Keys.txt", "r")
-temp = f.readlines()
-f.close()
-keys = []
-# Strips newline characters from the read in keys.
-for key in temp:
-    keys.append(key.rstrip())
+keys = read_in("Keys.txt", "r")
 c_key = keys[0]
 c_secret = keys[1]
 t_key = keys[2]
@@ -28,21 +33,9 @@ api = twitter.Api(consumer_key=c_key,
                   access_token_key=t_key,
                   access_token_secret=t_secret)
 # Reading in hashtags from text file.
-f = open("Hashtags.txt", "r")
-temp = f.readlines()
-f.close()
-hashtags = []
-# Strips newline characters from the read in hashtags.
-for line in temp:
-    hashtags.append(line.rstrip())
+hashtags = read_in("Hashtags.txt", "r")
 # Reading in tweets from text file.
-f = open("Tweets.txt", "r")
-temp = f.readlines()
-f.close()
-tweets = []
-# Strips newline characters from the read in tweets.
-for line in temp:
-    tweets.append(line.rstrip())
+tweets = read_in("Tweets.txt", "r")
 # Creates the job queue.
 queue = Queue()
 
