@@ -5,4 +5,4 @@ Access_token_secret=
 Time_delay=1800
 Total_action=1000
 Threads=1
-Behaviour=["Default"]
+Behaviour="Default"
