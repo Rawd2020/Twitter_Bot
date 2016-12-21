@@ -2,9 +2,9 @@ WELCOME TO TWITTER BOT! :D
 
 Created by: Rory Williams Doyle
 Created on: 18/12/2016
-Last modified: 18/12/2016
-Version: 2.0
-README last update: 19/12/2016
+Last modified: 21/12/2016
+Software version: 2.2
+README last update: 21/12/2016
 
 System Requirements:
     A machine with 2GB of RAM or greater.
