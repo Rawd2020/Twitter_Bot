@@ -1,7 +1,7 @@
 # Created by: Rory Williams Doyle
 # Created on: 18/12/2016
 # Last modified: 21/12/2016
-# Version: 2.3
+# Version: 3.0
 
 # These import statements import all the external libraries used in the bot.
 import twitter
