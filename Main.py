@@ -1,7 +1,7 @@
 # Created by: Rory Williams Doyle
 # Created on: 18/12/2016
 # Last modified: 21/12/2016
-# Version: 2.2
+# Version: 2.3
 
 # These import statements import all the external libraries used in the bot.
 import twitter
@@ -21,6 +21,8 @@ def read_in(file_name, permission):
     for item in temporary:
         data.append(item.rstrip())
     return data
+
+
 # Reading in keys from text file.
 keys = read_in("Keys.txt", "r")
 c_key = keys[0]
