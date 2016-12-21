@@ -93,7 +93,7 @@ def threader():
     # Main programme loop.
     while True:
         worker = queue.get()
-        number = random.randint(1, 1)
+        number = random.randint(0, 1)
         # The worker is assigned a random job based off the randomly generated number variable.
         if number == 0:
             tweet(worker)
