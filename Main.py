@@ -22,18 +22,13 @@ def read_in(file_name, permission):
         data.append(item.rstrip())
     return data
 
-
-# Reading in keys from text file.
-keys = read_in("Keys.txt", "r")
-c_key = keys[0]
-c_secret = keys[1]
-t_key = keys[2]
-t_secret = keys[3]
+# Reading in bot settings from Config.txt
+SETTINGS = read_in("Config.txt", "r")
 # Sets up the api for use.
-api = twitter.Api(consumer_key=c_key,
-                  consumer_secret=c_secret,
-                  access_token_key=t_key,
-                  access_token_secret=t_secret)
+api = twitter.Api(consumer_key=SETTINGS[0].split("=")[1],
+                  consumer_secret=SETTINGS[1].split("=")[1],
+                  access_token_key=SETTINGS[2].split("=")[1],
+                  access_token_secret=SETTINGS[3].split("=")[1])
 # Reading in hashtags from text file.
 hashtags = read_in("Hashtags.txt", "r")
 # Reading in tweets from text file.
@@ -42,6 +37,7 @@ tweets = read_in("Tweets.txt", "r")
 queue = Queue()
 # A simple thread lock to prevent data corruption.
 twitter_lock = threading.Lock()
+
 
 # This job is for sending out random pre-written tweets periodically.
 def tweet(worker_thread):
@@ -70,11 +66,14 @@ def re_tweet(worker_thread):
                 # This number is used to pick a random hashtag for the search.
                 number = random.randrange(0, len(hashtags))
                 hashtag = hashtags[number]
-                # Searched for a tweet using a random hashtag and posts the first result.
-                api.PostRetweet(api.GetSearch(
-                    raw_query="q=%23"+hashtag+" lang%3Aen&count=1")[0].id_str)
-                print("Re-Tweeted.")
-                post = 1
+                try:
+                    # Searched for a tweet using a random hashtag and posts the first result.
+                    api.PostRetweet(api.GetSearch(
+                        raw_query="q=%23"+hashtag+" lang%3Aen&count=1")[0].id_str)
+                    print("Re-Tweeted.")
+                    post = 1
+                except IndexError:
+                    print(hashtag+": This hashtag is not returning any object!")
         except twitter.error.TwitterError:
             with twitter_lock:
                 print("Re-Tweet Failed.")
@@ -83,30 +82,33 @@ def re_tweet(worker_thread):
 # The threader handles the distribution of jobs to the threads(workers).
 def threader():
     # Main programme loop.
-    while True:
-        worker_thread = queue.get()
-        number = random.randint(0, 1)
-        # The worker is assigned a random job based off the randomly generated number variable.
-        if number == 0:
-            tweet(worker_thread)
-            queue.task_done()
-        elif number == 1:
-            re_tweet(worker_thread)
-            queue.task_done()
-        else:
-            print("Threader number error.")
-            break
-        # This wait period defines the gap between when the bot finishes a job and when it moves onto the next.
-        time.sleep(1800)
+    if (SETTINGS[7].split("=")[1]) == "Default":
+        while True:
+            worker_thread = queue.get()
+            number = random.randint(0, 1)
+            # The worker is assigned a random job based off the randomly generated number variable.
+            if number == 0:
+                tweet(worker_thread)
+                queue.task_done()
+            elif number == 1:
+                re_tweet(worker_thread)
+                queue.task_done()
+            else:
+                print("Threader number error.")
+                break
+            # This wait period defines the gap between when the bot finishes a job and when it moves onto the next.
+            time.sleep(int(SETTINGS[4].split("=")[1]))
+    else:
+        print("Non-Default functionality has not been programmed yet!")
 
 # This for loop defines the number of threads(workers) available to the programme to work with
-for x in range(1):
+for x in range(int(SETTINGS[6].split("=")[1])):
     thread = threading.Thread(target=threader)
     thread.daemon = True
     thread.start()
 
 # This loop defines the number of jobs in the queue.
-for worker in range(1000):
+for worker in range(int(SETTINGS[5].split("=")[1])):
     queue.put(worker)
 
 # Starts the main thread.
