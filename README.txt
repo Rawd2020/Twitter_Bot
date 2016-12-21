@@ -27,7 +27,7 @@ Installation & Setup:
 
         Next(Presuming the pip3 command is working correctly in your terminal) open a
         new terminal and type:
-            pip3 install python-twitter
+            -pip3 install python-twitter
         To test that this step has worked correctly type the following into the terminal:
             -python3
             -import twitter
@@ -62,3 +62,13 @@ Testing:
     If everything worked then you should quickly see a message, "Tweeted", printed on the screen. To verify
     a tweet was successfully made to your account just sign into your twitter and have a look. There should be a
     new tweet posted that came from the Tweets.txt file.
+
+Miscellaneous:
+    -You can add new hashtags to search for the re-tweeting job by adding them to Hashtags.txt. Add each hashtag on
+    a new line excluding the has symbol from the start. For example, ig you wished to add the the hashtag #Peace,
+    you would type the word:
+        Peace
+    on the bottom line of Hashtage.txt.
+
+    -A similar process can be followed to add new tweets to the bots tweet job. Simply type the tweet at the bottom
+    of the file (ensuring it is under twitters character limit) and save.
