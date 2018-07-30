@@ -1,10 +1,12 @@
+!!!THIS PROJECT IS DEPRECATED!!!
+
 WELCOME TO TWITTER BOT! :D
 
 Created by: Rory Williams Doyle
 Created on: 18/12/2016
 Last modified: 21/12/2016
 Software version: 3.1
-README last update: 21/12/2016
+README last update: 30/07/2018
 
 System Requirements:
     A machine with 2GB of RAM or greater.
